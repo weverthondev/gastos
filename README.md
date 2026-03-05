@@ -27,6 +27,10 @@ GastOS é uma aplicação web de controle financeiro pessoal desenvolvida com **
 - Chart.js
 - HTML e CSS
 
+## 🌐 Acesse o projeto
+
+👉 [https://web-production-3b79.up.railway.app](https://web-production-3b79.up.railway.app)
+
 ## 📸 Screenshots
 
 > Em breve
