@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn gastos.wsgi
+web: python manage.py migrate --run-syncdb && gunicorn gastos.wsgi
