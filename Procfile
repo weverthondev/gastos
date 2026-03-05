@@ -1,1 +1,1 @@
-web: python manage.py collectstatic --noinput --clear && gunicorn gastos.wsgi
+web: gunicorn gastos.wsgi
