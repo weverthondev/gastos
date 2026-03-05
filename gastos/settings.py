@@ -1,6 +1,7 @@
 from decouple import config
 from pathlib import Path
 import dj_database_url
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -50,7 +51,7 @@ WSGI_APPLICATION = 'gastos.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600
     )
 }
