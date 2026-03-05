@@ -1,1 +1,1 @@
-web: gunicorn gastos.wsgi
+web: python manage.py migrate && gunicorn gastos.wsgi
