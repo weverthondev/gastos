@@ -33,7 +33,17 @@ GastOS é uma aplicação web de controle financeiro pessoal desenvolvida com **
 
 ## 📸 Screenshots
 
-> Em breve
+### Landing Page
+![Landing Page](screenshots/landing.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Metas
+![Metas](screenshots/metas.png)
+
+### Limites
+![Limites](screenshots/limites.png)
 
 ## 📌 Status do projeto
 
