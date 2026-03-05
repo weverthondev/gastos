@@ -91,7 +91,7 @@ http://127.0.0.1:8000
 
 ## 👨‍💻 Autor
 
-Feito com 💚 por [Weverthon Alves](https://www.linkedin.com/in/weverthon-alves-9551263b4/)
+Feito com 💚 por [Weverthon Alves](https://www.linkedin.com/in/weverthon-alves/)
 
 ## 📄 Licença
 
