@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}GastOS — Metas{% endblock %}
+{% block content %}
+
+<h4 class="mb-4 fw-bold">🏆 Minhas Metas</h4>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h5 class="card-title mb-3">Nova Meta</h5>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="acao" value="criar">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="titulo" class="form-control" placeholder="Ex: Viagem, Notebook..." required>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <input type="number" name="valor_alvo" step="0.01" class="form-control" placeholder="Valor alvo" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="prazo" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary-custom w-100">Criar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if metas %}
+<div class="row">
+    {% for meta in metas %}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm {% if meta.concluida %}border-success{% endif %}">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0">
+                        {% if meta.concluida %}✅{% else %}🎯{% endif %}
+                        {{ meta.titulo }}
+                    </h5>
+                    <form method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="acao" value="excluir">
+                        <input type="hidden" name="meta_id" value="{{ meta.id }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta meta?')">🗑️</button>
+                    </form>
+                </div>
+                <p class="text-muted mb-1" style="font-size: 0.85rem;">Prazo: {{ meta.prazo|date:"d/m/Y" }}</p>
+                <div class="d-flex justify-content-between mb-1">
+                    <span>R$ {{ meta.valor_atual|floatformat:2 }}</span>
+                    <span>R$ {{ meta.valor_alvo|floatformat:2 }}</span>
+                </div>
+                <div class="progress mb-3" style="height: 10px;">
+                    <div class="progress-bar {% if meta.concluida %}bg-success{% else %}bg-primary{% endif %}" style="width: {{ meta.percentual }}%;"></div>
+                </div>
+                {% if not meta.concluida %}
+                <form method="POST" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="acao" value="atualizar">
+                    <input type="hidden" name="meta_id" value="{{ meta.id }}">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">R$</span>
+                        <input type="number" name="valor_atual" step="0.01" class="form-control" value="{{ meta.valor_atual }}" placeholder="Valor atual">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary-custom">Atualizar</button>
+                </form>
+                {% else %}
+                <p class="text-success fw-bold mb-0">Meta concluída! 🎉</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card shadow-sm">
+    <div class="card-body text-center p-5">
+        <p class="text-muted">Você ainda não tem metas criadas. Crie sua primeira meta acima! 🎯</p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

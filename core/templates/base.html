@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}GastOS{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        [data-theme="light"] {
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-sidebar: #1a3c2e;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --sidebar-link: #cfe2d4;
+            --sidebar-hover: #265442;
+            --table-head-bg: #1a3c2e;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --bg-sidebar: #1a3c2e;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --sidebar-link: #cfe2d4;
+            --sidebar-hover: #265442;
+            --table-head-bg: #1a3c2e;
+        }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-main);
+        }
+
+        .table {
+            color: var(--text-main);
+        }
+
+        .table thead {
+            background-color: var(--table-head-bg);
+            color: white;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .btn-primary-custom {
+            background-color: #1a3c2e;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #265442;
+            color: white;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background-color: var(--bg-sidebar);
+        }
+
+        .sidebar a {
+            color: var(--sidebar-link);
+            text-decoration: none;
+            display: block;
+            padding: 10px 20px;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--sidebar-hover);
+            color: white;
+        }
+
+        .sidebar .logo {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 20px;
+            border-bottom: 1px solid var(--sidebar-hover);
+        }
+
+        .form-control,
+        .form-select {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-color: #ced4da;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        .input-group-text {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar d-flex flex-column" style="width: 220px; min-width: 220px;">
+            <div class="logo">💰 GastOS</div>
+            {% if request.user.is_authenticated %}
+            <div class="mt-3">
+                <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+                <a href="{% url 'adicionar' %}">➕ Nova Transação</a>
+                <a href="{% url 'perfil' %}">👤 Meu Perfil</a>
+                <a href="{% url 'limites' %}">🎯 Limites</a>
+                <a href="{% url 'metas' %}">🏆 Metas</a>
+                <a href="{% url 'sair' %}">🚪 Sair</a>
+            </div>
+            <div class="mt-auto p-3" style="color: var(--sidebar-link); font-size: 0.85rem;">
+                Olá, <strong>{{ request.user.username }}</strong>!
+                <br>
+                <button onclick="toggleTheme()" class="btn btn-sm btn-outline-light mt-2 w-100">🌙 Tema</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Conteúdo principal -->
+        <div class="flex-grow-1 p-4">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show"
+                role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Tema claro/escuro
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            document.querySelector('[onclick="toggleTheme()"]').textContent = next === 'dark' ? '☀️ Tema' : '🌙 Tema';
+        }
+
+        // Carrega tema salvo
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.querySelector('[onclick="toggleTheme()"]');
+            if (btn) btn.textContent = savedTheme === 'dark' ? '☀️ Tema' : '🌙 Tema';
+        });
+
+        // Fecha alertas automaticamente
+        setTimeout(function () {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 3000);
+    </script>
+</body>
+
+</html>

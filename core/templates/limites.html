@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %}GastOS — Limites{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4">🎯 Limites por Categoria</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for cat, nome in categorias %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ nome }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <input type="number" name="{{ cat }}" step="0.01" class="form-control" value="{{ limites|get_item:cat|default:'' }}" placeholder="Sem limite">
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary-custom w-100 mt-2">Salvar Limites</button>
+                </form>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 mt-2">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

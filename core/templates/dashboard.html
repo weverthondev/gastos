@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% block title %}GastOS — Dashboard{% endblock %}
+{% block content %}
+
+<h4 class="mb-4 fw-bold">Dashboard</h4>
+
+{% for alerta in alertas %}
+<div class="alert {% if alerta.percentual >= 100 %}alert-danger{% else %}alert-warning{% endif %} d-flex align-items-center gap-2">
+    {% if alerta.percentual >= 100 %}
+        ⚠️ Limite de <strong>{{ alerta.categoria }}</strong> ultrapassado! Gasto: R$ {{ alerta.gasto|floatformat:2 }} / Limite: R$ {{ alerta.limite|floatformat:2 }}
+    {% else %}
+        🔔 Você já usou {{ alerta.percentual }}% do limite de <strong>{{ alerta.categoria }}</strong>. Gasto: R$ {{ alerta.gasto|floatformat:2 }} / Limite: R$ {{ alerta.limite|floatformat:2 }}
+    {% endif %}
+</div>
+{% endfor %}
+
+<form method="GET" class="d-flex gap-2 mb-4 flex-wrap">
+    <select name="mes" class="form-select w-auto">
+        <option value="todos" {% if mes_selecionado == 'todos' %}selected{% endif %}>Todos os meses</option>
+        {% for numero, nome in meses %}
+            <option value="{{ numero }}" {% if numero == mes_selecionado %}selected{% endif %}>{{ nome }}</option>
+        {% endfor %}
+    </select>
+    <input type="number" name="ano" value="{{ ano_selecionado }}" class="form-control w-auto">
+    <select name="tipo" class="form-select w-auto">
+        <option value="todos" {% if tipo_filtro == 'todos' %}selected{% endif %}>Todos os tipos</option>
+        <option value="entrada" {% if tipo_filtro == 'entrada' %}selected{% endif %}>Entrada</option>
+        <option value="saida" {% if tipo_filtro == 'saida' %}selected{% endif %}>Saída</option>
+    </select>
+    <select name="categoria" class="form-select w-auto">
+        <option value="todos" {% if categoria_filtro == 'todos' %}selected{% endif %}>Todas as categorias</option>
+        <option value="alimentacao" {% if categoria_filtro == 'alimentacao' %}selected{% endif %}>Alimentação</option>
+        <option value="transporte" {% if categoria_filtro == 'transporte' %}selected{% endif %}>Transporte</option>
+        <option value="lazer" {% if categoria_filtro == 'lazer' %}selected{% endif %}>Lazer</option>
+        <option value="saude" {% if categoria_filtro == 'saude' %}selected{% endif %}>Saúde</option>
+        <option value="educacao" {% if categoria_filtro == 'educacao' %}selected{% endif %}>Educação</option>
+        <option value="outros" {% if categoria_filtro == 'outros' %}selected{% endif %}>Outros</option>
+    </select>
+    <button type="submit" class="btn btn-primary-custom">Filtrar</button>
+</form>
+
+{% if progressos %}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">🎯 Limites por Categoria</h5>
+        <div class="row">
+            {% for p in progressos %}
+            <div class="col-md-4 mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="fw-semibold">{{ p.categoria }}</span>
+                    <span class="text-muted" style="font-size: 0.85rem;">R$ {{ p.gasto|floatformat:2 }} / R$ {{ p.limite|floatformat:2 }}</span>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-{{ p.cor }}" style="width: {{ p.percentual }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mb-4">
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3" style="border-left: 5px solid #1a3c2e !important;">
+            <p class="text-muted mb-1">Total de Entradas</p>
+            <h4 class="text-success fw-bold">R$ {{ total_entradas|floatformat:2 }}</h4>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3" style="border-left: 5px solid #dc3545 !important;">
+            <p class="text-muted mb-1">Total de Saídas</p>
+            <h4 class="text-danger fw-bold">R$ {{ total_saidas|floatformat:2 }}</h4>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3" style="border-left: 5px solid #0d6efd !important;">
+            <p class="text-muted mb-1">Saldo do Mês</p>
+            <h4 class="text-primary fw-bold">R$ {{ saldo|floatformat:2 }}</h4>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">Minhas Transações <span class="badge rounded-pill" style="background-color: #1a3c2e; font-size: 0.75rem;">{{ transacoes.paginator.count }} transações</span></h5>
+            <a href="{% url 'exportar' %}" class="btn btn-sm text-white" style="background-color: #1a3c2e; font-size: 0.75rem;">⬇️ Exportar CSV</a>
+        </div>
+        {% if transacoes %}
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th><a href="?ordem={% if ordem == 'data' %}-data{% else %}data{% endif %}&mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&tipo={{ tipo_filtro }}&categoria={{ categoria_filtro }}" class="text-black text-decoration-none">Data {% if ordem == 'data' %}↑{% elif ordem == '-data' %}↓{% endif %}</a></th>
+                    <th><a href="?ordem={% if ordem == 'titulo' %}-titulo{% else %}titulo{% endif %}&mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&tipo={{ tipo_filtro }}&categoria={{ categoria_filtro }}" class="text-black text-decoration-none">Título {% if ordem == 'titulo' %}↑{% elif ordem == '-titulo' %}↓{% endif %}</a></th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                    <th><a href="?ordem={% if ordem == 'valor' %}-valor{% else %}valor{% endif %}&mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&tipo={{ tipo_filtro }}&categoria={{ categoria_filtro }}" class="text-black text-decoration-none">Valor {% if ordem == 'valor' %}↑{% elif ordem == '-valor' %}↓{% endif %}</a></th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacao in transacoes %}
+                <tr class="{% if transacao.tipo == 'entrada' %}table-success{% else %}table-danger{% endif %}">
+                    <td>{{ transacao.data|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if transacao.descricao %}
+                            <span title="{{ transacao.descricao }}" style="cursor: help; border-bottom: 1px dotted #999;">{{ transacao.titulo }}</span>
+                        {% else %}
+                            {{ transacao.titulo }}
+                        {% endif %}
+                    </td>
+                    <td>{{ transacao.get_categoria_display }}</td>
+                    <td>{{ transacao.get_tipo_display }}</td>
+                    <td>R$ {{ transacao.valor|floatformat:2 }}</td>
+                    <td>
+                        <a href="{% url 'editar' transacao.id %}" class="btn btn-sm btn-outline-secondary">✏️</a>
+                        <a href="{% url 'excluir' transacao.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta transação?')">🗑️</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted">Você ainda não tem transações registradas.</p>
+        {% endif %}
+
+        {% if page_obj.has_other_pages %}
+        <nav class="mt-3">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&tipo={{ tipo_filtro }}&categoria={{ categoria_filtro }}">Anterior</a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}&mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&tipo={{ tipo_filtro }}&categoria={{ categoria_filtro }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&tipo={{ tipo_filtro }}&categoria={{ categoria_filtro }}">Próxima</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+
+{% if grafico_valores != '[]' %}
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">📊 Gastos por Categoria</h5>
+        <div style="max-width: 400px; margin: 0 auto;">
+            <canvas id="graficoCategorias"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('graficoCategorias').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: {{ grafico_labels|safe }},
+            datasets: [{
+                data: {{ grafico_valores|safe }},
+                backgroundColor: [
+                    '#1a3c2e', '#dc3545', '#0d6efd',
+                    '#ffc107', '#6f42c1', '#20c997'
+                ],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+{% endif %}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">📈 Evolução dos últimos 6 meses</h5>
+        <canvas id="graficoEvolucao"></canvas>
+    </div>
+</div>
+
+<script>
+    const ctx2 = document.getElementById('graficoEvolucao').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {{ evolucao_labels|safe }},
+            datasets: [
+                {
+                    label: 'Entradas',
+                    data: {{ evolucao_entradas|safe }},
+                    backgroundColor: '#1a3c2e',
+                },
+                {
+                    label: 'Saídas',
+                    data: {{ evolucao_saidas|safe }},
+                    backgroundColor: '#dc3545',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}GastOS — Nova Transação{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4">➕ Nova Transação</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ field.label }}</label>
+                        <div>
+                            {% if field.field.widget.input_type == 'select' %}
+                                <select name="{{ field.html_name }}" class="form-select">
+                                    {% for choice in field.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% elif field.field.widget.input_type == 'textarea' %}
+                                <textarea name="{{ field.html_name }}" class="form-control" rows="3">{{ field.value|default:'' }}</textarea>
+                            {% else %}
+                                <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" step="0.01">
+                            {% endif %}
+                        </div>
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary-custom w-100 mt-2">Salvar Transação</button>
+                </form>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 mt-2">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
