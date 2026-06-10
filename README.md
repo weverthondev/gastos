@@ -1,16 +1,17 @@
 # 💰 GastOS — Sistema de Controle Financeiro Pessoal
 
-GastOS é uma aplicação web de controle financeiro pessoal desenvolvida com **Python** e **Django**. O projeto permite registrar receitas e despesas, acompanhar o saldo mensal, definir limites de gastos por categoria e criar metas financeiras.
+GastOS é uma aplicação web de controle financeiro pessoal desenvolvida com **Python** e **Django**. O projeto permite registrar receitas e despesas, acompanhar o saldo mensal, definir limites de gastos por categoria, criar metas financeiras e visualizar tudo em um dashboard moderno e completo.
 
 ## 🚀 Funcionalidades
 
 - ✅ Cadastro e autenticação de usuários
 - ✅ Registro de receitas e despesas com categorias
 - ✅ Dashboard com resumo financeiro mensal
-- ✅ Filtros por mês, ano, tipo e categoria
-- ✅ Gráfico de gastos por categoria (pizza)
+- ✅ Filtros por mês, tipo e categoria
+- ✅ Gráfico de gastos por categoria (rosca, com total no centro)
 - ✅ Gráfico de evolução dos últimos 6 meses (barras)
-- ✅ Limites de gastos por categoria com alertas
+- ✅ Planejamento mensal com barras de progresso por categoria
+- ✅ Limites de gastos por categoria com alertas automáticos
 - ✅ Metas financeiras com barra de progresso
 - ✅ Exportar transações para CSV
 - ✅ Ordenação da tabela por data, título e valor
@@ -22,14 +23,14 @@ GastOS é uma aplicação web de controle financeiro pessoal desenvolvida com **
 
 - Python 3.12
 - Django 6.0
-- SQLite
+- PostgreSQL (produção) / SQLite (desenvolvimento)
 - Bootstrap 5
 - Chart.js
 - HTML e CSS
 
 ## 🌐 Acesse o projeto
 
-👉 [https://web-production-3b79.up.railway.app](https://web-production-3b79.up.railway.app)
+👉 [https://gastos-k4in.onrender.com](https://gastos-k4in.onrender.com)
 
 ## 📸 Screenshots
 
@@ -69,25 +70,25 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-**4. Rode as migrações:**
+**4. Configure o arquivo `.env`** com base no `.env.example`
+
+**5. Rode as migrações:**
 ```bash
 python manage.py migrate
 ```
 
-**5. Crie um superusuário (opcional):**
+**6. Crie um superusuário (opcional):**
 ```bash
 python manage.py createsuperuser
 ```
 
-**6. Inicie o servidor:**
+**7. Inicie o servidor:**
 ```bash
 python manage.py runserver
 ```
 
-**7. Acesse no navegador:**
-```
+**8. Acesse no navegador:**
 http://127.0.0.1:8000
-```
 
 ## 👨‍💻 Autor
 
