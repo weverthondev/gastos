@@ -135,6 +135,8 @@ def dashboard_view(request):
                 'limite': float(limite.limite),
                 'percentual': percentual,
             })
+            
+    metas = MetaFinanceira.objects.filter(usuario=request.user).order_by('concluida', 'prazo')
 
     return render(request, 'dashboard.html', {
         'transacoes': page_obj,
@@ -144,9 +146,10 @@ def dashboard_view(request):
         'meses': meses,
         'mes_selecionado': mes,
         'ano_selecionado': ano,
-        'tipo_filtro': tipo_filtro,
+        'tipo_filtro': tipo_filtro, 
         'categoria_filtro': categoria_filtro,
         'grafico_labels': json.dumps(labels),
+        'grafico_labels_list': labels,
         'grafico_valores': json.dumps(valores),
         'page_obj': page_obj,
         'ordem': ordem,
@@ -155,6 +158,7 @@ def dashboard_view(request):
         'evolucao_saidas': evolucao_saidas,
         'alertas': alertas,
         'progressos': progressos,
+        'metas': metas,
     })
 
 def sair_view(request):
